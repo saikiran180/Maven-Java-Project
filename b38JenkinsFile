@@ -1,7 +1,7 @@
 pipeline {
 
    agent {
-      label 'buildserver'
+      label 'git'
    }
 
    tools {
@@ -13,12 +13,16 @@ pipeline {
       stage("Compile-Src-Code"){
         steps{
 	        echo 'Compile Src Code'
-          git credentialsId: 'GitHub-Credentials', url: 'https://github.com/venkat09docs/Maven-Java-Project.git'
+          git credentialsId: 'git', url: 'https://github.com/saikiran180/Maven-Java-Project.git'
 
           sh "mvn clean compile"
         }
       }
-
+      
+      agent {
+         label 'maven'
+      }
+      
       stage("Pre-Deployment-Testing"){
           steps{
             echo 'Pre-Deployment-Testing'
@@ -47,7 +51,7 @@ pipeline {
       stage("Deploy-to-Server"){
         steps{
           echo 'Deploy-to-Server'
-          deploy adapters: [tomcat9(credentialsId: 'staging-server', path: '', url: 'http://54.217.15.144:9000/')], contextPath: 'webapp', war: 'target/*.war'
+          deploy adapters: [tomcat9(credentialsId: 'tomcat web pw', path: '', url: 'http://3.7.29.134:8080')], contextPath: 'webapp', war: 'target/*.war'
         }
       }
 
